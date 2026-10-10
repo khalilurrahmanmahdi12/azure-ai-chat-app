@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Azure AI · Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="brand-name">Azure AI</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="chat" onclick="switchTab('chat')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-item" data-tab="rag" onclick="switchTab('rag')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <span>RAG</span>
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+        </svg>
+        <span>Konfigurasi</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="creator-card">
+        <div class="creator-avatar">KM</div>
+        <div class="creator-info">
+          <span class="creator-label">Dirancang & Dibangun oleh</span>
+          <span class="creator-name">KHALILURRAHMAN MAHDI</span>
+        </div>
+      </div>
+      <div class="mode-pill" id="modePill" onclick="toggleMockMode()">
+        <span class="mode-dot"></span>
+        <span id="modeText">Mock</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- ════ TAB: CHAT ════ -->
+    <div class="view active" id="tab-chat">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>Chat</h1>
+          <span class="chip">gpt-4o</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-ghost" onclick="clearChat()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+            </svg>
+            Hapus riwayat
+          </button>
+        </div>
+      </header>
+
+      <div class="messages" id="chatMessages">
+        <div class="welcome">
+          <div class="welcome-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#2563eb"/>
+            </svg>
+          </div>
+          <h2>Azure AI Assistant</h2>
+          <p>Dirancang & dibangun oleh <strong>KHALILURRAHMAN MAHDI</strong> · Azure OpenAI gpt-4o</p>
+          <div class="creator-badge-welcome">
+            <span>Dirancang oleh KHALILURRAHMAN MAHDI</span>
+          </div>
+          <div class="suggestion-grid">
+            <button class="suggestion" onclick="fillInput('Apa itu Azure AI Foundry dan apa saja fitur utamanya?')">
+              Apa itu Azure AI Foundry?
+            </button>
+            <button class="suggestion" onclick="fillInput('Jelaskan cara kerja RAG (Retrieval Augmented Generation) pada Azure')">
+              Cara kerja RAG di Azure
+            </button>
+            <button class="suggestion" onclick="fillInput('Buatkan contoh kode Python untuk memanggil Azure OpenAI API')">
+              Contoh kode Azure OpenAI
+            </button>
+            <button class="suggestion" onclick="fillInput('Apa perbedaan Prompt Flow dan langchain?')">
+              Prompt Flow vs LangChain
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-dock">
+        <div class="input-box" id="chatInputBox">
+          <textarea id="chatInput" placeholder="Tulis pesan…" rows="1"
+            oninput="autoResize(this)"
+            onkeydown="handleKey(event,'chat')"></textarea>
+          <button class="send" id="chatSend" onclick="sendChat()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <p class="input-caption">Enter untuk kirim · Shift+Enter untuk baris baru · <span id="modeCaption">Mode: Mock</span></p>
+      </div>
+    </div>
+
+    <!-- ════ TAB: RAG ════ -->
+    <div class="view" id="tab-rag">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>RAG</h1>
+          <span class="chip">Azure AI Search</span>
+        </div>
+        <button class="btn-ghost" onclick="clearRag()">Reset chat</button>
+      </header>
+
+      <div class="rag-layout">
+        <!-- Panel kiri: dokumen -->
+        <div class="docs-panel">
+          <div class="docs-section">
+            <p class="section-label">Knowledge Base</p>
+
+            <div class="upload-area" id="uploadArea"
+              onclick="document.getElementById('fileInput').click()"
+              ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>Unggah dokumen</span>
+              <small>.txt · .pdf · .docx · .md</small>
+            </div>
+            <input type="file" id="fileInput" accept=".txt,.pdf,.docx,.md" style="display:none" onchange="onFileSelect(event)"/>
+          </div>
+
+          <div class="docs-section" style="flex:1;overflow-y:auto">
+            <p class="section-label">Dokumen <span class="count-badge" id="docCountBadge">2</span></p>
+            <div class="doc-list" id="docList">
+              <div class="doc-row" data-id="1">
+                <div class="doc-thumb txt">TXT</div>
+                <div class="doc-meta">
+                  <span class="doc-name">azure_ai_overview.txt</span>
+                  <span class="doc-sub">3.2 KB · 42 chunks</span>
+                </div>
+                <button class="doc-del" onclick="removeDoc(1)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <div class="doc-row" data-id="2">
+                <div class="doc-thumb md">MD</div>
+                <div class="doc-meta">
+                  <span class="doc-name">prompt_flow_guide.md</span>
+                  <span class="doc-sub">8.1 KB · 96 chunks</span>
+                </div>
+                <button class="doc-del" onclick="removeDoc(2)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <div class="stats-row">
+              <div class="stat"><span id="statDocs">2</span><small>Dokumen</small></div>
+              <div class="stat"><span id="statChunks">138</span><small>Chunks</small></div>
+              <div class="stat"><span id="statTopK">5</span><small>Top-K</small></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel kanan: chat -->
+        <div class="rag-chat">
+          <div class="messages" id="ragMessages">
+            <div class="welcome" style="padding-top:40px">
+              <div class="welcome-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+              </div>
+              <h2>Chat dengan Dokumen</h2>
+              <p>Tanya apa saja tentang dokumen yang sudah diunggah</p>
+            </div>
+          </div>
+
+          <div class="input-dock">
+            <div class="input-box">
+              <textarea id="ragInput" placeholder="Tanya tentang dokumen Anda…" rows="1"
+                oninput="autoResize(this)"
+                onkeydown="handleKey(event,'rag')"></textarea>
+              <button class="send" onclick="sendRag()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </div>
+            <p class="input-caption">Azure AI Search (vector) → Azure OpenAI · Top-K: <span id="topKCaption">5</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ TAB: SETTINGS ════ -->
+    <div class="view" id="tab-settings">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1>Konfigurasi</h1>
+          <span class="chip">Azure AI Foundry</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-ghost" onclick="testConn()">Test koneksi</button>
+          <button class="btn-primary" onclick="saveConfig()">Simpan</button>
+        </div>
+      </header>
+
+      <div class="settings-body">
+        <div class="settings-grid">
+
+          <!-- Row 1, Col 1: Azure OpenAI -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon blue">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Azure OpenAI</h3>
+                <p>Language model & chat completions</p>
+              </div>
+            </div>
+            <div class="field">
+              <label>Endpoint</label>
+              <input type="text" id="aoaiEndpoint" placeholder="https://YOUR-RESOURCE.openai.azure.com/"/>
+            </div>
+            <div class="field">
+              <label>API Key</label>
+              <input type="password" id="aoaiKey" placeholder="••••••••••••••••••••••••"/>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Deployment</label>
+                <input type="text" id="aoaiDeployment" value="gpt-4o" placeholder="gpt-4o"/>
+              </div>
+              <div class="field">
+                <label>API Version</label>
+                <select id="aoaiVersion">
+                  <option value="2024-02-01" selected>2024-02-01</option>
+                  <option value="2024-05-01-preview">2024-05-01-preview</option>
+                  <option value="2024-08-01-preview">2024-08-01-preview</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 1, Col 2: Azure AI Search -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon purple">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Azure AI Search</h3>
+                <p>Vector index untuk RAG</p>
+              </div>
+            </div>
+            <div class="field">
+              <label>Search Endpoint</label>
+              <input type="text" id="searchEndpoint" placeholder="https://YOUR-SEARCH.search.windows.net"/>
+            </div>
+            <div class="field">
+              <label>Search API Key</label>
+              <input type="password" id="searchKey" placeholder="••••••••••••••••••••••••"/>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Index Name</label>
+                <input type="text" id="searchIndex" value="rag-index"/>
+              </div>
+              <div class="field">
+                <label>Top-K <span class="field-value" id="topKVal">5</span></label>
+                <input type="range" id="topKSlider" min="1" max="20" value="5"
+                  oninput="syncSlider('topK',this.value)"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2, Col 1: Parameter Model -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon green">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Parameter Model</h3>
+                <p>Tuning perilaku generasi teks</p>
+              </div>
+            </div>
+            <div class="field">
+              <label>Temperature <span class="field-value" id="tempVal">0.7</span></label>
+              <input type="range" id="tempSlider" min="0" max="1" step="0.05" value="0.7"
+                oninput="syncSlider('temp',this.value)"/>
+              <div class="range-labels"><span>0.0 (Presisi)</span><span>1.0 (Kreatif)</span></div>
+            </div>
+            <div class="field">
+              <label>Max Tokens <span class="field-value" id="tokensVal">1024</span></label>
+              <input type="range" id="tokensSlider" min="256" max="4096" step="256" value="1024"
+                oninput="syncSlider('tokens',this.value)"/>
+            </div>
+            <div class="field">
+              <label>System Prompt</label>
+              <textarea id="systemPrompt" rows="3" placeholder="Instruksi untuk AI…">Kamu adalah asisten AI yang dirancang dan dibangun oleh KHALILURRAHMAN MAHDI menggunakan Microsoft Azure AI. Jawab dalam bahasa Indonesia yang baik, jelas, dan profesional.</textarea>
+            </div>
+          </div>
+
+          <!-- Row 2, Col 2: Mode & Status -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon orange">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Mode & Status Koneksi</h3>
+                <p>Status gateway dan operasional</p>
+              </div>
+            </div>
+
+            <div class="mode-selector">
+              <label class="mode-opt" id="optMock">
+                <input type="radio" name="appMode" value="mock" checked onchange="setMode('mock')"/>
+                <div class="mode-opt-body">
+                  <strong>Mock Demo Mode</strong>
+                  <span>Simulasi respons lokal tanpa API key Azure</span>
+                </div>
+              </label>
+              <label class="mode-opt" id="optReal">
+                <input type="radio" name="appMode" value="real" onchange="setMode('real')"/>
+                <div class="mode-opt-body">
+                  <strong>Azure Live Mode</strong>
+                  <span>Koneksi langsung ke layanan Azure Cloud</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="status-list">
+              <div class="status-row" id="stAOAI">
+                <span class="dot yellow"></span>
+                <div class="status-text-group">
+                  <strong class="status-title">Azure OpenAI</strong>
+                  <span class="status-desc">Belum dikonfigurasi</span>
+                </div>
+              </div>
+              <div class="status-row" id="stSearch">
+                <span class="dot yellow"></span>
+                <div class="status-text-group">
+                  <strong class="status-title">Azure AI Search</strong>
+                  <span class="status-desc">Belum dikonfigurasi</span>
+                </div>
+              </div>
+              <div class="status-row" id="stMode">
+                <span class="dot blue"></span>
+                <div class="status-text-group">
+                  <strong class="status-title">Mode Aktif</strong>
+                  <span class="status-desc">Mock Demo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Architecture -->
+        <div class="arch-card">
+          <div class="arch-card-header">
+            <div>
+              <p class="section-label">Arsitektur & Alur Kerja Sistem</p>
+              <h3>Pipeline Integrasi Gen AI (Prompt Flow & RAG)</h3>
+            </div>
+            <div class="arch-badges">
+              <span class="badge-blue">Azure AI Foundry</span>
+              <span class="badge-purple">Hybrid Vector Search</span>
+            </div>
+          </div>
+
+          <div class="arch-flow-diagram">
+            <!-- Step 1: User Client -->
+            <div class="arch-step-box">
+              <div class="step-num">1</div>
+              <div class="step-icon">👤</div>
+              <div class="step-text">
+                <strong>User Browser</strong>
+                <span>Web App Client (HTML/JS)</span>
+              </div>
+            </div>
+
+            <div class="arch-connector">
+              <span class="conn-text">1. Prompt / Pertanyaan</span>
+              <div class="conn-line"></div>
+            </div>
+
+            <!-- Step 2: Prompt Flow Gateway -->
+            <div class="arch-step-box highlight-box">
+              <div class="step-num">2</div>
+              <div class="step-icon">⚡</div>
+              <div class="step-text">
+                <strong>Prompt Flow Gateway</strong>
+                <span>Orkestrasi Logika & Guardrails</span>
+              </div>
+            </div>
+
+            <div class="arch-connector">
+              <span class="conn-text">2. Evaluasi Mode</span>
+              <div class="conn-line"></div>
+            </div>
+
+            <!-- Step 3: Branch RAG vs Direct LLM -->
+            <div class="arch-dual-box">
+              <div class="dual-row rag-branch">
+                <span class="branch-tag purple">Jalur RAG</span>
+                <div class="branch-content">
+                  <span class="branch-icon">🔍</span>
+                  <div>
+                    <strong>Azure AI Search</strong>
+                    <small>Retrieve Top-K Chunks Vector</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dual-row llm-branch">
+                <span class="branch-tag blue">Generasi AI</span>
+                <div class="branch-content">
+                  <span class="branch-icon">🤖</span>
+                  <div>
+                    <strong>Azure OpenAI Service</strong>
+                    <small>gpt-4o Model Inference</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="arch-connector">
+              <span class="conn-text">3. Respons Terformat</span>
+              <div class="conn-line"></div>
+            </div>
+
+            <!-- Step 4: Final Output -->
+            <div class="arch-step-box green-box">
+              <div class="step-num">4</div>
+              <div class="step-icon">💬</div>
+              <div class="step-text">
+                <strong>Jawaban & Sitasi</strong>
+                <span>Streaming Markdown ke User</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-meta-legend">
+            <div class="legend-item">
+              <span class="legend-dot blue"></span>
+              <div class="legend-text">
+                <span class="legend-title">Chat Langsung:</span>
+                <span class="legend-desc">User ➔ Prompt Flow ➔ Azure OpenAI (gpt-4o) ➔ Jawaban AI</span>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot purple"></span>
+              <div class="legend-text">
+                <span class="legend-title">Mode RAG:</span>
+                <span class="legend-desc">User ➔ Vector Embedding ➔ Azure AI Search (Top-K) ➔ Augment Prompt ➔ Azure OpenAI ➔ Jawaban Berbasis Dokumen</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
