@@ -19,6 +19,7 @@ Aplikasi ini mengintegrasikan model bahasa mutakhir **Azure OpenAI Service (gpt-
 - 🌐 **Sertifikat Kompetensi Dicoding**: [Lihat Verifikasi Sertifikat](https://www.dicoding.com/certificates/EYX4QW2JJPDL)
 - 💻 **Local Host**: `http://localhost:8080`
 - 📁 **Repository**: `https://github.com/khalilurrahmanmahdi12/azure-ai-chat-app`
+- 🌐 *Website*: https://azure-ai-chat-app.vercel.app/
 
 ---
 
