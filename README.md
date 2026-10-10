@@ -145,7 +145,7 @@ Dicoding Certified: *Membangun Aplikasi Gen AI dengan Microsoft Azure*
 
 - 🌐 **Sertifikat Dicoding**: [dicoding.com/certificates/EYX4QW2JJPDL](https://www.dicoding.com/certificates/EYX4QW2JJPDL)
 - 🔗 **GitHub**: [github.com/khalilurrahmanmahdi12](https://github.com/khalilurrahmanmahdi12)
-- 💼 **Portofolio**: [portofolio-khalil-dev-v2.vercel.app](https://portofolio-khalil-dev-v2.vercel.app/)
+- 💼 **Portofolio**: https://khalildev.web.id/
 
 ---
 
